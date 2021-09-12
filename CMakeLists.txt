@@ -6,7 +6,7 @@ set( SDL_SHARED OFF CACHE BOOL "" FORCE )
 add_subdirectory( external/SDL )
 
 add_executable(
-    sdl2-demo
+    ${PROJECT_NAME}
     "src/main.cpp"
     )
-target_link_libraries( sdl2-demo SDL2main SDL2-static )
+target_link_libraries( ${PROJECT_NAME} SDL2main SDL2-static )
