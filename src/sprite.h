@@ -40,7 +40,7 @@ struct Animation : public Sprite {
         return std::chrono::duration<double>(Clock::now() - timestamp).count();
     }
 
-    bool animation_ended(const TimeStamp timestamp) const { // is the animation sequence is still playing?
+    bool animation_ended(const TimeStamp timestamp) const { // is the animation sequence still playing?
         return !repeat && time_elapsed(timestamp) >= duration;
     }
 
@@ -56,7 +56,6 @@ struct Animation : public Sprite {
     double duration = 0; // duration of the animation sequence in seconds
     bool repeat = false; // should we repeat the animation?
 };
-
 
 #endif // SPRITE_H
 
