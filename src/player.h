@@ -23,16 +23,30 @@ struct Player {
     void set_state(int s) {
         timestamp = Clock::now();
         state = s;
-        if (state==REST)
+        if (state!=FLIGHT && state!=WALK)
             vx = 0;
-        if (state==WALK)
+        else if (state==WALK)
             vx = backwards ? -150 : 150;
+        else if (state==FLIGHT) {
+            vy = jumpvy;
+            vx = backwards ? -jumpvx : jumpvx;
+        }
     }
 
     void handle_keyboard() {
         const Uint8 *kbstate = SDL_GetKeyboardState(NULL);
         if (state==WALK && !kbstate[SDL_SCANCODE_RIGHT] && !kbstate[SDL_SCANCODE_LEFT])
             set_state(REST);
+        if ((state==REST || state==WALK) && kbstate[SDL_SCANCODE_UP]) {
+            if (kbstate[SDL_SCANCODE_LEFT] || kbstate[SDL_SCANCODE_RIGHT]) {
+                jumpvx =  200; // long jump
+                jumpvy = -200;
+            } else {
+                jumpvx =   50; // high jump
+                jumpvy = -300;
+            }
+            set_state(TAKEOFF);
+        }
         if (state==REST && (kbstate[SDL_SCANCODE_LEFT] || kbstate[SDL_SCANCODE_RIGHT])) {
             backwards = kbstate[SDL_SCANCODE_LEFT];
             set_state(WALK);
@@ -40,7 +54,11 @@ struct Player {
     }
 
     void update_state(const double dt, const Map &map) {
-        if (map.is_empty(x/map.tile_w, y/map.tile_h + 1))
+        if (state==TAKEOFF && sprites[state].animation_ended(timestamp))
+            set_state(FLIGHT); // takeoff -> flight
+        if (state==LANDING && sprites[state].animation_ended(timestamp))
+            set_state(REST);   // landing -> rest
+        if (state!=FLIGHT && map.is_empty(x/map.tile_w, y/map.tile_h + 1))
             set_state(FALL);   // put free falling sprite if no ground under the feet
 
         double cand_x = x + dt*vx; // candidate coordinates prior to collision detection
@@ -54,7 +72,9 @@ struct Player {
         }
 
         if (!map.is_empty(cand_x/map.tile_w, cand_y/map.tile_h)) { // vertical collision detection
-            if (state==FALL)
+            if (vy>100) // if vertical speed is important, play landing animation
+                set_state(LANDING);
+            else if (state==FLIGHT)
                 set_state(REST);
             vy = 0; // stop
             int snap = std::round(cand_y/map.tile_h)*map.tile_h; // snap the coorinate to the boundary of last free tile
@@ -74,6 +94,7 @@ struct Player {
     double x = 150, y = 200; // coordinates of the player
     double vx = 0, vy = 0;   // speed
     bool backwards = false;  // left or right
+    double jumpvx = 0, jumpvy = 0; // will be used to differentiate high jump from a long jump
 
     int state = REST;
     TimeStamp timestamp = Clock::now();
