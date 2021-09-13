@@ -40,7 +40,12 @@ struct Player {
     }
 
     void update_state(const double dt, const Map &map) {
+        if (map.is_empty(x/map.tile_w, y/map.tile_h + 1))
+            set_state(FALL);   // put free falling sprite if no ground under the feet
+
         double cand_x = x + dt*vx; // candidate coordinates prior to collision detection
+        double cand_y = y + dt*vy;
+        vy += dt*300; // gravity
 
         if (!map.is_empty(cand_x/map.tile_w, y/map.tile_h)) { // horizontal collision detection
             int snap = std::round(cand_x/map.tile_w)*map.tile_w; // snap the coorinate to the boundary of last free tile
@@ -48,7 +53,16 @@ struct Player {
             vx = 0; // stop
         }
 
+        if (!map.is_empty(cand_x/map.tile_w, cand_y/map.tile_h)) { // vertical collision detection
+            if (state==FALL)
+                set_state(REST);
+            vy = 0; // stop
+            int snap = std::round(cand_y/map.tile_h)*map.tile_h; // snap the coorinate to the boundary of last free tile
+            cand_y = snap + (snap>cand_y ? 1 : -1);              // be careful to snap to the left or to the right side of the free tile
+        }
+
         x = cand_x; // final coordinates post-collision detection
+        y = cand_y;
     }
 
     void draw() {
