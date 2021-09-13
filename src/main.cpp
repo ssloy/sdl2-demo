@@ -6,12 +6,39 @@
 #include <SDL.h>
 
 #include "fps_counter.h"
-#include "sprite.h"
 #include "map.h"
 #include "player.h"
 
+void main_loop(SDL_Renderer *renderer) {
+    FPS_Counter fps_counter(renderer);
+    Map map(renderer);
+    Player player(renderer);
+    TimeStamp timestamp = Clock::now();
+    while (1) { // main game loop
+        SDL_Event event; // handle window closing
+        if (SDL_PollEvent(&event) && (SDL_QUIT==event.type || (SDL_KEYDOWN==event.type && SDLK_ESCAPE==event.key.keysym.sym)))
+            break; // quit
+        player.handle_keyboard(); // no need for the event variable, direct keyboard state polling
+
+        double dt = std::chrono::duration<double>(Clock::now() - timestamp).count();
+        if (dt<.02) { // 50 FPS regulation
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            continue;
+        }
+        timestamp = Clock::now();
+
+        player.update_state(dt, map); // gravity, movements, collision detection etc
+
+        SDL_RenderClear(renderer); // re-draw the window
+        fps_counter.draw();
+        player.draw();
+        map.draw();
+        SDL_RenderPresent(renderer);
+    }
+} // N.B. fps_counter, map and player objects call their destructos here, thus destroying allocated textures, it must be done prior to destroying the renderer
+
 int main() {
-    SDL_SetMainReady(); // tell SDL that we handle main function ourselves, comes with the SDL_MAIN_HANDLED macro
+    SDL_SetMainReady(); // tell SDL that we handle main() function ourselves, comes with the SDL_MAIN_HANDLED macro
     if (SDL_Init(SDL_INIT_VIDEO)) {
         std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
         return -1;
@@ -26,33 +53,7 @@ int main() {
     SDL_SetWindowTitle(window, "SDL2 game blank");
     SDL_SetRenderDrawColor(renderer, 210, 255, 179, 255);
 
-    { // main loop
-        TimeStamp timestamp = Clock::now();
-        FPS_Counter fps_counter(renderer);
-        Map map(renderer);
-        Player player(renderer);
-        while (1) { // main game loop
-            SDL_Event event; // handle window closing
-            if (SDL_PollEvent(&event) && (SDL_QUIT==event.type || (SDL_KEYDOWN==event.type && SDLK_ESCAPE==event.key.keysym.sym)))
-                break; // quit
-            player.handle_keyboard(); // no need for the event variable, direct keyboard state polling
-
-            double dt = std::chrono::duration<double>(Clock::now() - timestamp).count();
-            if (dt<.02) { // 50 FPS regulation
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                continue;
-            }
-            timestamp = Clock::now();
-
-            player.update_state(dt, map); // gravity, movements, collision detection etc
-
-            SDL_RenderClear(renderer); // re-draw the window
-            fps_counter.draw();
-            player.draw();
-            map.draw();
-            SDL_RenderPresent(renderer);
-        }
-    } // N.B. these brackets are needed to destroy textures before destroying the renderer
+    main_loop(renderer); // all interesting things happen here
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

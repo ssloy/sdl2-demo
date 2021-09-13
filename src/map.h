@@ -3,17 +3,14 @@
 #include <cassert>
 
 struct Map {
-    Map(SDL_Renderer *renderer) :
-            renderer(renderer),
-            sprite(renderer, "../resources/ground.bmp", 128) {
+    Map(SDL_Renderer *renderer) : renderer(renderer), textures(renderer, "../resources/ground.bmp", 128) {
         assert(sizeof(level) == w*h+1); // +1 for the null terminated string
         int window_w, window_h;
-        if (SDL_GetRendererOutputSize(renderer, &window_w, &window_h)) {
+        if (!SDL_GetRendererOutputSize(renderer, &window_w, &window_h)) {
+            tile_w = window_w/w;
+            tile_h = window_h/h;
+        } else
             std::cerr << "Failed to get renderer size: " << SDL_GetError() << std::endl;
-            return;
-        }
-        tile_w = window_w/w;
-        tile_h = window_h/h;
     }
 
     void draw() { // draw the level in the renderer window
@@ -21,8 +18,8 @@ struct Map {
             for (int i=0; i<w; i++) {
                 if (is_empty(i, j)) continue;
                 SDL_Rect dest = {tile_w*i, tile_h*j, tile_w, tile_h};
-                SDL_Rect src = sprite.rect(get(i,j));
-                SDL_RenderCopy(renderer, sprite.texture, &src, &dest);
+                SDL_Rect src = textures.rect(get(i,j));
+                SDL_RenderCopy(renderer, textures.texture, &src, &dest);
             }
     }
 
@@ -36,12 +33,12 @@ struct Map {
         return level[i+j*w] == ' ';
     }
 
-    SDL_Renderer *renderer;   // draw here
-    Sprite sprite;            // textures to be drawn
-    int tile_w=-1, tile_h=-1; // tile size in the renderer window
+    SDL_Renderer *renderer; // draw here
+    int tile_w = 0, tile_h = 0; // tile size in the renderer window
 
-    static constexpr int w = 16; // overall map dimensions
-    static constexpr int h = 12;
+    const Sprite textures;         // textures to be drawn
+    static constexpr int w = 16; // overall map dimensions, the array level[] has the length w*h+1 (+1 for the null character)
+    static constexpr int h = 12; // space character for empty tiles, digits indicate the texture index to be used per tile
     static constexpr char level[w*h+1] = " 123451234012340"\
                                          "5              5"\
                                          "0              0"\
@@ -55,6 +52,5 @@ struct Map {
                                          "0          12345"\
                                          "1234012345052500";
 };
-
 #endif // MAP_H
 

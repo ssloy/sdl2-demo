@@ -90,20 +90,18 @@ struct Player {
         SDL_RenderCopyEx(renderer, sprites[state].texture, &src, &dest, 0, nullptr, backwards ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
     }
 
-    double x = 150, y = 200; // coordinates of the player
+    double x = 150, y = 200; // coordinates of the character
     double vx = 0, vy = 0;   // speed
-    bool backwards = false;  // left or right
+    bool backwards = false;  // facing left or right
     double jumpvx = 0, jumpvy = 0; // will be used to differentiate high jump from a long jump
 
     int state = REST;
     TimeStamp timestamp = Clock::now();
+    SDL_Renderer *renderer;   // draw here
 
     const int sprite_w = 256; // size of the sprite on the screen
     const int sprite_h = 128;
-
-    SDL_Renderer *renderer;   // draw here
-    std::array<Animation,6> sprites; // sprite sequences to be drawn
+    const std::array<Animation,6> sprites; // sprite sequences to be drawn
 };
-
 #endif
 

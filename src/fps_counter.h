@@ -7,33 +7,30 @@ using TimeStamp = std::chrono::time_point<Clock>;
 #include "sprite.h"
 
 struct FPS_Counter {
-    FPS_Counter(SDL_Renderer *renderer) :
-        numbers(renderer, std::string(RESOURCES_DIR) + "numbers.bmp", 24),
-        renderer(renderer) {
+    FPS_Counter(SDL_Renderer *renderer) : renderer(renderer), numbers(renderer, std::string(RESOURCES_DIR) + "numbers.bmp", 24) {
     }
 
     void draw() {
-        cnt1++;
+        fps_cur++;
         double dt = std::chrono::duration<double>(Clock::now() - timestamp).count();
         if (dt>=.3) { // every 300 ms update current FPS reading
-            cnt2 = cnt1/dt;
-            cnt1 = 0;
-            timestamp  = Clock::now();
+            fps_prev = fps_cur/dt;
+            fps_cur = 0;
+            timestamp = Clock::now();
         }
-        std::string str = std::to_string(cnt2); // extract individual digits
-        SDL_Rect dst = {4, 16, numbers.width, numbers.height};
-        for (const char c : str) { // iterate through the digits
-            SDL_Rect src = numbers.rect(c-'0');
+        SDL_Rect dst = {4, 16, numbers.width, numbers.height}; // first character will be drawn here
+        for (const char c : std::to_string(fps_prev)) { // extract individual digits of fps_prev
+            SDL_Rect src = numbers.rect(c-'0'); // crude conversion of numeric characters to int: '7'-'0'=7
             SDL_RenderCopy(renderer, numbers.texture, &src, &dst); // draw current digit
-            dst.x += numbers.width + 4;
+            dst.x += numbers.width + 4; // draw characters left-to-right, +4 for letter spacing (TODO: add padding directly to the .bmp file)
         }
     }
 
-    int cnt1 = 0, cnt2 = 0;
-    Sprite numbers;
-    SDL_Renderer *renderer;   // draw here
-    TimeStamp timestamp = Clock::now();
+    int fps_cur  = 0; // the FPS readings are updated once in a while; fps_cur is the number of draw() calls since the last reading
+    int fps_prev = 0; // and here is the last fps reading
+    TimeStamp timestamp = Clock::now(); // last time fps_prev was updated
+    SDL_Renderer *renderer; // draw here
+    const Sprite numbers;   // "font" file
 };
-
 #endif // FPS_COUNTER_H
 
