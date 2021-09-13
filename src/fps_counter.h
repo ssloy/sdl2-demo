@@ -1,10 +1,15 @@
+#ifndef FPS_COUNTER_H
+#define FPS_COUNTER_H
+
 using Clock = std::chrono::high_resolution_clock;
 using TimeStamp = std::chrono::time_point<Clock>;
 
 #include "sprite.h"
 
 struct FPS_Counter {
-    FPS_Counter(SDL_Renderer *renderer) : numbers(renderer, std::string(RESOURCES_DIR) + "numbers.bmp", 24), renderer(renderer) {
+    FPS_Counter(SDL_Renderer *renderer) :
+        numbers(renderer, std::string(RESOURCES_DIR) + "numbers.bmp", 24),
+        renderer(renderer) {
     }
 
     void draw() {
@@ -16,7 +21,7 @@ struct FPS_Counter {
             timestamp  = Clock::now();
         }
         std::string str = std::to_string(cnt2); // extract individual digits
-        SDL_Rect dst = {4, 4, numbers.width, numbers.height};
+        SDL_Rect dst = {4, 16, numbers.width, numbers.height};
         for (const char c : str) { // iterate through the digits
             SDL_Rect src = numbers.rect(c-'0');
             SDL_RenderCopy(renderer, numbers.texture, &src, &dst); // draw current digit
@@ -29,4 +34,6 @@ struct FPS_Counter {
     SDL_Renderer *renderer;   // draw here
     TimeStamp timestamp = Clock::now();
 };
+
+#endif // FPS_COUNTER_H
 
