@@ -1,5 +1,15 @@
-# sdl2-demo
-SDL2 platformer game blank repository
+# A blank for a SDL2-based platformer game
+Attention, this repository does not contain (and never will) a playable game. The goal is to show basic principles to my students, so it is only a demo repo.
+Here is an example of what is inside:
+
+![](https://github.com/ssloy/sdl2-demo/raw/main/capture.gif)
+
+At the moment of this writing the repository contains mere 332 lines of code:
+```sh
+ssloy@khronos:~/+/sdl2-demo/src$ cat *.cpp *.h | wc -l
+332
+```
+
 
 # Compilation
 ```sh
