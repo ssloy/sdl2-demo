@@ -35,6 +35,7 @@ int main() {
             SDL_Event event; // handle window closing
             if (SDL_PollEvent(&event) && (SDL_QUIT==event.type || (SDL_KEYDOWN==event.type && SDLK_ESCAPE==event.key.keysym.sym)))
                 break; // quit
+            player.handle_keyboard(); // no need for the event variable, direct keyboard state polling
 
             double dt = std::chrono::duration<double>(Clock::now() - timestamp).count();
             if (dt<.02) { // 50 FPS regulation
@@ -42,6 +43,8 @@ int main() {
                 continue;
             }
             timestamp = Clock::now();
+
+            player.update_state(dt, map); // gravity, movements, collision detection etc
 
             SDL_RenderClear(renderer); // re-draw the window
             fps_counter.draw();

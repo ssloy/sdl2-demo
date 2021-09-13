@@ -20,6 +20,37 @@ struct Player {
                 Animation(renderer, "../resources/fall.bmp",    256, 1.0, true )} {
     }
 
+    void set_state(int s) {
+        timestamp = Clock::now();
+        state = s;
+        if (state==REST)
+            vx = 0;
+        if (state==WALK)
+            vx = backwards ? -150 : 150;
+    }
+
+    void handle_keyboard() {
+        const Uint8 *kbstate = SDL_GetKeyboardState(NULL);
+        if (state==WALK && !kbstate[SDL_SCANCODE_RIGHT] && !kbstate[SDL_SCANCODE_LEFT])
+            set_state(REST);
+        if (state==REST && (kbstate[SDL_SCANCODE_LEFT] || kbstate[SDL_SCANCODE_RIGHT])) {
+            backwards = kbstate[SDL_SCANCODE_LEFT];
+            set_state(WALK);
+        }
+    }
+
+    void update_state(const double dt, const Map &map) {
+        double cand_x = x + dt*vx; // candidate coordinates prior to collision detection
+
+        if (!map.is_empty(cand_x/map.tile_w, y/map.tile_h)) { // horizontal collision detection
+            int snap = std::round(cand_x/map.tile_w)*map.tile_w; // snap the coorinate to the boundary of last free tile
+            cand_x = snap + (snap>cand_x ? 1 : -1);              // be careful to snap to the left or to the right side of the free tile
+            vx = 0; // stop
+        }
+
+        x = cand_x; // final coordinates post-collision detection
+    }
+
     void draw() {
         SDL_Rect src = sprites[state].rect(timestamp);
         SDL_Rect dest = { int(x)-sprite_w/2, int(y)-sprite_h, sprite_w, sprite_h };
@@ -27,9 +58,10 @@ struct Player {
     }
 
     double x = 150, y = 200; // coordinates of the player
+    double vx = 0, vy = 0;   // speed
     bool backwards = false;  // left or right
 
-    int state = WALK;
+    int state = REST;
     TimeStamp timestamp = Clock::now();
 
     const int sprite_w = 256; // size of the sprite on the screen
