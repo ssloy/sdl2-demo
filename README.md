@@ -2,7 +2,7 @@
 Attention, this repository does not contain (and never will) a playable game. The goal is to show basic principles to my students, so it is only a demo repo.
 Here is an example of what is inside:
 
-![](https://github.com/ssloy/sdl2-demo/raw/main/capture.gif)
+![](https://github.com/ssloy/sdl2-demo/doc/raw/main/capture.gif)
 
 At the moment of this writing the repository contains mere 332 lines of code:
 ```sh
