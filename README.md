@@ -8,7 +8,7 @@ cd sdl2-demo &&
 mkdir build &&
 cd build &&
 cmake .. &&
-make -j &&
+cmake --build . -j &&
 ./sdl2-demo
 ```
 
