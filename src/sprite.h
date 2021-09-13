@@ -1,5 +1,6 @@
 #ifndef SPRITE_H
 #define SPRITE_H
+#include <algorithm>
 
 struct Sprite {
     Sprite(SDL_Renderer *renderer, const std::string filename, const int width) : width(width) {

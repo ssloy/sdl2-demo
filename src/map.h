@@ -1,6 +1,5 @@
 #ifndef MAP_H
 #define MAP_H
-
 #include <cassert>
 
 struct Map {

@@ -1,6 +1,5 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-
 #include <array>
 #include <cmath>
 #include "map.h"
