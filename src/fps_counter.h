@@ -1,14 +1,7 @@
-#ifndef FPS_COUNTER_H
-#define FPS_COUNTER_H
-
-using Clock = std::chrono::high_resolution_clock;
-using TimeStamp = std::chrono::time_point<Clock>;
-
 #include "sprite.h"
 
 struct FPS_Counter {
-    FPS_Counter(SDL_Renderer *renderer) : renderer(renderer), numbers(renderer, std::string(RESOURCES_DIR) + "numbers.bmp", 24) {
-    }
+    FPS_Counter(SDL_Renderer *renderer) : renderer(renderer), numbers(renderer, "numbers.bmp", 24) {}
 
     void draw() {
         fps_cur++;
@@ -32,5 +25,4 @@ struct FPS_Counter {
     SDL_Renderer *renderer; // draw here
     const Sprite numbers;   // "font" file
 };
-#endif // FPS_COUNTER_H
 

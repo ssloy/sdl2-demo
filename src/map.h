@@ -1,9 +1,7 @@
-#ifndef MAP_H
-#define MAP_H
 #include <cassert>
 
 struct Map {
-    Map(SDL_Renderer *renderer) : renderer(renderer), textures(renderer, "../resources/ground.bmp", 128) {
+    Map(SDL_Renderer *renderer) : renderer(renderer), textures(renderer, "ground.bmp", 128) {
         assert(sizeof(level) == w*h+1); // +1 for the null terminated string
         int window_w, window_h;
         if (!SDL_GetRendererOutputSize(renderer, &window_w, &window_h)) {
@@ -17,9 +15,9 @@ struct Map {
         for (int j=0; j<h; j++)
             for (int i=0; i<w; i++) {
                 if (is_empty(i, j)) continue;
-                SDL_Rect dest = {tile_w*i, tile_h*j, tile_w, tile_h};
+                SDL_Rect dst = { tile_w*i, tile_h*j, tile_w, tile_h };
                 SDL_Rect src = textures.rect(get(i,j));
-                SDL_RenderCopy(renderer, textures.texture, &src, &dest);
+                SDL_RenderCopy(renderer, textures.texture, &src, &dst);
             }
     }
 
@@ -52,5 +50,4 @@ struct Map {
                                          "0          12345"\
                                          "1234012345052500";
 };
-#endif // MAP_H
 

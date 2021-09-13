@@ -1,10 +1,8 @@
-#ifndef SPRITE_H
-#define SPRITE_H
 #include <algorithm>
 
 struct Sprite {
     Sprite(SDL_Renderer *renderer, const std::string filename, const int width) : width(width) {
-        SDL_Surface *surface = SDL_LoadBMP(filename.c_str());
+        SDL_Surface *surface = SDL_LoadBMP((std::string(RESOURCES_DIR) + filename).c_str());
         if (!surface) {
             std::cerr << "Error in SDL_LoadBMP: " << SDL_GetError() << std::endl;
             return;
@@ -22,7 +20,7 @@ struct Sprite {
         return { idx*width, 0, width, height };
     }
 
-    ~Sprite() { // do not forget to free the memory
+    ~Sprite() { // do not forget to free the memory!
         if (texture) SDL_DestroyTexture(texture);
     }
 
@@ -31,6 +29,9 @@ struct Sprite {
     int height  = 0; // sprite height
     int nframes = 0; // number of frames in the animation sequence
 };
+
+using Clock = std::chrono::high_resolution_clock;
+using TimeStamp = std::chrono::time_point<Clock>;
 
 struct Animation : public Sprite {
     Animation(SDL_Renderer *renderer, const std::string filename, const int width, const double duration, const bool repeat) :
@@ -51,8 +52,7 @@ struct Animation : public Sprite {
         return { frame(timestamp)*width, 0, width, height };
     }
 
-    double duration = 1; // duration of the animation sequence in seconds
-    bool repeat = false; // should we repeat the animation?
+    const double duration = 1; // duration of the animation sequence in seconds
+    const bool repeat = false; // should we repeat the animation?
 };
-#endif // SPRITE_H
 

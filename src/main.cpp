@@ -4,7 +4,6 @@
 #include <thread>
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
-
 #include "fps_counter.h"
 #include "map.h"
 #include "player.h"
