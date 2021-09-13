@@ -8,6 +8,7 @@
 #include "fps_counter.h"
 #include "sprite.h"
 #include "map.h"
+#include "player.h"
 
 int main() {
     SDL_SetMainReady(); // tell SDL that we handle main function ourselves, comes with the SDL_MAIN_HANDLED macro
@@ -29,6 +30,7 @@ int main() {
         TimeStamp timestamp = Clock::now();
         FPS_Counter fps_counter(renderer);
         Map map(renderer);
+        Player player(renderer);
         while (1) { // main game loop
             SDL_Event event; // handle window closing
             if (SDL_PollEvent(&event) && (SDL_QUIT==event.type || (SDL_KEYDOWN==event.type && SDLK_ESCAPE==event.key.keysym.sym)))
@@ -41,9 +43,9 @@ int main() {
             }
             timestamp = Clock::now();
 
-
             SDL_RenderClear(renderer); // re-draw the window
             fps_counter.draw();
+            player.draw();
             map.draw();
             SDL_RenderPresent(renderer);
         }
