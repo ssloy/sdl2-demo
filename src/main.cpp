@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstring>
+#include <string>
 #include <chrono>
 #include <thread>
 #define SDL_MAIN_HANDLED
@@ -24,18 +24,19 @@ int main() {
     SDL_SetWindowTitle(window, "SDL2 game blank");
     SDL_SetRenderDrawColor(renderer, 210, 255, 179, 255);
 
-    TimeStamp timestamp = Clock::now();
-    FPS_Counter fps_counter(renderer);
-    while (1) { // main game loop
-        SDL_Event event; // handle window closing
-        if (SDL_PollEvent(&event) && (SDL_QUIT==event.type || (SDL_KEYDOWN==event.type && SDLK_ESCAPE==event.key.keysym.sym)))
-            break; // quit
+    {
+        TimeStamp timestamp = Clock::now();
+        FPS_Counter fps_counter(renderer);
+        while (1) { // main game loop
+            SDL_Event event; // handle window closing
+            if (SDL_PollEvent(&event) && (SDL_QUIT == event.type || (SDL_KEYDOWN == event.type && SDLK_ESCAPE == event.key.keysym.sym)))
+                break; // quit
 
-        SDL_RenderClear(renderer); // re-draw the window
-        fps_counter.draw();
-        SDL_RenderPresent(renderer);
+            SDL_RenderClear(renderer); // re-draw the window
+            fps_counter.draw();
+            SDL_RenderPresent(renderer);
+        }
     }
-
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
