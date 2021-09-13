@@ -20,10 +20,8 @@ add_executable(
     "src/main.cpp"
     )
 target_include_directories(${PROJECT_NAME} PRIVATE "external/SDL/include")
-target_include_directories(${PROJECT_NAME} PRIVATE "external/SDL_ttf")
 target_link_libraries(
     ${PROJECT_NAME} PRIVATE
     SDL2main
     SDL2-static
-    SDL2_ttf
     )
