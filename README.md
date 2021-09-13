@@ -3,7 +3,6 @@ Attention, this repository does not contain (and never will) a playable game. Th
 
 ![](https://raw.githubusercontent.com/ssloy/sdl2-demo/main/doc/capture.gif)
 
-<<<<<<< Updated upstream
 **[Check the wiki](https://github.com/ssloy/sdl2-demo/wiki) for the detailed description of how the project is built.**
 
 At the moment of this writing the repository contains mere 300 lines of code:
