@@ -12,23 +12,19 @@ struct FPS_Counter {
         if (!font) return;
         cnt1++;
         double dt = std::chrono::duration<double>(Clock::now() - timestamp).count();
-        if (dt>=.5) {
-            cnt2 = cnt1;
+        if (dt>=.3) {
+            cnt2 = cnt1/dt;
             cnt1 = 0;
             timestamp  = Clock::now();
         }
-
         SDL_Surface* msg = TTF_RenderText_Solid(font, std::to_string(cnt2).c_str(), {0, 0, 0, 0});
         if (!msg) return;
         SDL_Texture* txt = SDL_CreateTextureFromSurface(renderer, msg);
         SDL_FreeSurface(msg);
-
         int w, h;
         SDL_QueryTexture(txt, nullptr, nullptr, &w, &h);
-
         SDL_Rect rect = {0, 0, w, h};
         SDL_RenderCopy(renderer, txt, nullptr, &rect);
-
         SDL_DestroyTexture(txt);
     }
 
