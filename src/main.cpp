@@ -34,7 +34,7 @@ void main_loop(SDL_Renderer *renderer) {
         map.draw();
         SDL_RenderPresent(renderer);
     }
-} // N.B. fps_counter, map and player objects call their destructos here, thus destroying allocated textures, it must be done prior to destroying the renderer
+} // N.B. fps_counter, map and player objects call their destructors here, thus destroying allocated textures, it must be done prior to destroying the renderer
 
 int main() {
     SDL_SetMainReady(); // tell SDL that we handle main() function ourselves, comes with the SDL_MAIN_HANDLED macro

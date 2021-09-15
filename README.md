@@ -5,10 +5,10 @@ Attention, this repository does not contain (and never will) a playable game. Th
 
 **[Check the wiki](https://github.com/ssloy/sdl2-demo/wiki) for the detailed description of how the project is built.**
 
-At the moment of this writing the repository contains mere 300 lines of code:
+At the moment of this writing the repository contains less than 300 lines of code:
 ```sh
 ssloy@khronos:~/sdl2-demo/src$ cat *.cpp *.h | wc -l
-300
+296
 ```
 
 
