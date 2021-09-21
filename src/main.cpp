@@ -19,14 +19,14 @@ void main_loop(SDL_Renderer *renderer) {
             break; // quit
         player.handle_keyboard(); // no need for the event variable, direct keyboard state polling
 
-        double dt = std::chrono::duration<double>(Clock::now() - timestamp).count();
-        if (dt<.02) { // 50 FPS regulation
+        const auto dt = Clock::now() - timestamp;
+        if (dt<std::chrono::milliseconds(20)) { // 50 FPS regulation
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
             continue;
         }
         timestamp = Clock::now();
 
-        player.update_state(dt, map); // gravity, movements, collision detection etc
+        player.update_state(std::chrono::duration<double>(dt).count(), map); // gravity, movements, collision detection etc
 
         SDL_RenderClear(renderer); // re-draw the window
         fps_counter.draw();
