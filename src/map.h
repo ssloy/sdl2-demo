@@ -1,12 +1,14 @@
+#pragma once
 #include <cassert>
+#include <iostream>
 
 struct Map {
     Map(SDL_Renderer *renderer) : renderer(renderer), textures(renderer, "ground.bmp", 128) {
         assert(sizeof(level) == w*h+1); // +1 for the null terminated string
-        int window_w, window_h;
+        int window_w{ 0 }, window_h{ 0 };
         if (!SDL_GetRendererOutputSize(renderer, &window_w, &window_h)) {
-            tile_w = window_w/w;
-            tile_h = window_h/h;
+            tile_w = static_cast<int>(window_w/w);
+            tile_h = static_cast<int>(window_h/h);
         } else
             std::cerr << "Failed to get renderer size: " << SDL_GetError() << std::endl;
     }
@@ -37,7 +39,7 @@ struct Map {
     const Sprite textures;         // textures to be drawn
     static constexpr int w = 16; // overall map dimensions, the array level[] has the length w*h+1 (+1 for the null character)
     static constexpr int h = 12; // space character for empty tiles, digits indicate the texture index to be used per tile
-    static constexpr char level[w*h+1] = " 123451234012340"\
+    static constexpr uint8_t level[w*h+1] = " 123451234012340"\
                                          "5              5"\
                                          "0              0"\
                                          "5          5   5"\

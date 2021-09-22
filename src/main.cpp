@@ -1,5 +1,3 @@
-#include <iostream>
-#include <string>
 #include <chrono>
 #include <thread>
 #define SDL_MAIN_HANDLED
